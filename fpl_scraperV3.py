@@ -8,7 +8,7 @@ from msvcrt import getch
 import os
 import json
 import math
-  
+from checkifhome import checkifhome
   
   
 def calcresult(n):
@@ -46,7 +46,7 @@ def get_team(team,gw):
     print("1. "+names[1]+" "+str(scores[1])+", "+names[2]+" "+str(scores[2])+", "+names[3]+" "+str(scores[3])+", "+names[4]+" "+str(scores[4])+" = "+str(scores[1]+scores[2]+scores[3]+scores[4]),file=f)
     print("2. "+names[0]+" "+str(scores[0])+"*2 = "+str(scores[0]*2),file=f)
     ha=0
-    if checkifhome(team[6],team[5],gw):
+    if checkifhome(team[5],fixtures):
         
         ha=max(scores)*0.2
         print("3. Home advantage= "+"0.2*"+str(max(scores))+"="+str(ha),file=f)
@@ -56,17 +56,7 @@ def get_team(team,gw):
     print("Total="+str(total)+" ~"+str(round(total)),file=f)
     print("",file=f)
     return round(total)
-def checkifhome(teamid,teamname,gw):
-    #print(teamid,teamname,gw)
-    r = requests.get("http://www.football-data.org/teams/"+str(teamid)+"/fixtures")
-    #print(r)
-    result = json.loads(r.text)
-    #print(result)
-    if teamname in result['fixtures'][gw-1]['homeTeam']:
-        #print(result[gw+1])
-        return True
-    else:
-        return False
+
 def getfix(gw):
     res = requests.get("http://www.football-data.org/soccerseasons/354/fixtures?matchday="+str(gw))
     result=json.loads(res.text)
@@ -80,6 +70,7 @@ print("facebook.com/kirankaranth1")
 print("")
 dict={"Manchester United FC":0,"Swansea City":0,"Leicester City":0,"Everton FC":0,"West Ham United FC":0,"Tottenham Hotspur FC":0,"West Bromwich Albion":0,"Sunderland AFC":0,"Stoke City FC":0,"Aston Villa FC":0,"Queens Park Rangers":0,"Hull City FC":0,"FC Arsenal London":0,"Crystal Palace":0,"Liverpool FC":0,"FC Southampton":0,"Newcastle United":0,"Manchester City FC":0,"FC Burnley":0,"Chelsea FC":0}
 gw=input("Enter Gameweek number:  ")
+fixtures=getfix(gw)
 if(gw>=17 and gw<=24):
     
     fn="Gameweek_"+str(gw)+"v3.txt"
@@ -153,7 +144,7 @@ dict["West Bromwich Albion"]=get_team(westbrom,gw)
 dict["West Ham United FC"]=get_team(ham,gw)
 
 print(dict)
-fixtures=getfix(gw)
+#fixtures=getfix(gw)
 
 for fix in fixtures:
     hscore=dict[fix['homeTeam']]
